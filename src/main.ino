@@ -1,8 +1,11 @@
 #include <Arduino.h>
 #include <BleKeyboard.h>
 #include "SoundOut.h"
+#include "BrailleInput.hxx"
 
 BleKeyboard bKeyboard;
+BrailleInput brl;
+
 class SwitchDriver {
 public:
 	void begin();
@@ -16,7 +19,7 @@ private:
 	uint16_t getstate() { return state; };
 };
 
-uint8_t SwitchDriver::pins[] = {32,12,13,14,0};
+uint8_t SwitchDriver::pins[] = {37,38,39,0};
 
 void SwitchDriver::begin()
 {
@@ -86,6 +89,7 @@ void setup()
 	Serial.begin(115200);
 	keys.begin();
 	bKeyboard.begin();
+	brl.begin(two_dot_mode);
 	sOut.begin();
 }
 
@@ -93,7 +97,8 @@ void loop()
 {
 	uint16_t key = keys.getKey();
 	if (key) {
-		Serial.print((int)key);
-		Serial.print(' ');
+		brl.input(key);
+		uint8_t c = brl.get();
+		if (c) Serial.println(c);
 	}
 }
