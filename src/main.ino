@@ -99,6 +99,9 @@ void loop()
 	if (key) {
 		brl.input(key);
 		uint8_t c = brl.get();
-		if (c) Serial.println(c);
+		if (c) {
+			sOut.beep(1000, 10);
+			bKeyboard.write(c);
+		}
 	}
 }

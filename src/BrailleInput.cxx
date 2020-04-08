@@ -23,19 +23,42 @@ bool BrailleInput::input(uint16_t key)
   return false;
   if (i_mode == six_dot_mode) return six_input(key);
 }
+
+bool BrailleInput::pushBackBraille()
+{
+  brlBuf[0] = nabccTable[inputKey];
+  return true;
+}
+
 bool BrailleInput::two_input(uint8_t key)
 {
   uint16_t i=0;
-  if (key & 0x01) i = 1;
-  if (key & 0x02) i |= 0x08;
+  // 特殊キー処理
+  if (key == 0x5) {
+    brlBuf[0] = '\r';
+    inputState=0;
+    return true;
+  }
+
+  // 入力を点字ビット列に変換
+  if (key == 0x4) i = 0; // ブランク
+  else {
+    if (key & 0x01) i = 1;
+    if (key & 0x02) i |= 0x08;
+  }
+
+  // 入力段階チェック
   if (inputState == 1) i <<= 1;
-  if (inputState == 2) i <<= 2;
+  else if (inputState == 2) i <<= 2;
+
+  // 次の段階に進むための初期化
   inputKey |= i;
   inputState++;
   brlBuf[0] = 0;
+
+  // 最終段階、文字の生成
   if (inputState == 3) {
-    Serial.println(inputKey);
-    brlBuf[0] = nabccTable[inputKey];
+    pushBackBraille();
     inputKey=0;
     inputState=0;
     return true;

@@ -27,6 +27,7 @@ private:
   bool six_input(uint8_t key) { return true; };
   bool eight_input(uint8_t key) { return true; };
   bool two_input(uint8_t key);
+  bool pushBackBraille();
   uint16_t inputKey;
   uint8_t brlBuf[4];
   input_mode_t i_mode;
