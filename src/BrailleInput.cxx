@@ -35,7 +35,12 @@ bool BrailleInput::two_input(uint8_t key)
   uint16_t i=0;
   // 特殊キー処理
   if (key == 0x5) {
-    brlBuf[0] = '\r';
+    brlBuf[0] = 0xB0;
+    inputState=0;
+    return true;
+  }
+  if (key == 0x6) {
+    brlBuf[0] = 0xB2;
     inputState=0;
     return true;
   }

@@ -87,10 +87,11 @@ SwitchDriver keys;
 void setup()
 {
 	Serial.begin(115200);
+	sOut.begin();
 	keys.begin();
 	bKeyboard.begin();
 	brl.begin(two_dot_mode);
-	sOut.begin();
+	sOut.morseOut('s');
 }
 
 void loop()
