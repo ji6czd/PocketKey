@@ -99,10 +99,10 @@ void loop()
 	uint16_t key = keys.getKey();
 	if (key) {
 		brl.input(key);
-		uint8_t c = brl.get();
-		if (c) {
+		const char *s = brl.get();
+		if (s[0]) {
 			sOut.beep(1000, 10);
-			bKeyboard.write(c);
+			bKeyboard.print(s);
 		}
 	}
 }
