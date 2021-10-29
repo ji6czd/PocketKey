@@ -1,9 +1,9 @@
 #include <Arduino.h>
-#include <BleKeyboard.h>
-#include "SoundOut.h"
-#include "BrailleInput.hxx"
+#include <Adafruit_TinyUSB.h> // for Serial
 
-BleKeyboard bKeyboard;
+#include "BrailleInput.hxx"
+#include "delay.h"
+
 BrailleInput brl;
 
 class SwitchDriver {
@@ -13,21 +13,23 @@ public:
 private:
 	uint16_t state=0;
 	static const uint32_t threshold=10000;
-	static uint8_t pins[9];
+	static uint8_t pins[8];
 	uint16_t press();
 	uint16_t release();
 	uint16_t getstate() { return state; };
 };
 
-uint8_t SwitchDriver::pins[] = {37,38,39,0};
+uint8_t SwitchDriver::pins[] = {9, 10, 11, 12, 13};
 
 void SwitchDriver::begin()
 {
-	delay(5000);
+	for (int i = 0; i < 10; i++) {
+		Serial.printf("Initializing... %d\n", i);
+		delay(1000);
+	}
 	for (uint8_t i=0; pins[i] != 0; i++) {
 		pinMode(pins[i], INPUT_PULLUP);
-		Serial.print(pins[i]);
-		Serial.println(" is initialized");
+		Serial.printf("Pin %d initialized.\n", pins[i]);
 	}
 }
 
@@ -87,11 +89,8 @@ SwitchDriver keys;
 void setup()
 {
 	Serial.begin(115200);
-	sOut.begin();
 	keys.begin();
-	bKeyboard.begin();
 	brl.begin(two_dot_mode);
-	sOut.morseOut('s');
 }
 
 void loop()
@@ -101,8 +100,7 @@ void loop()
 		brl.input(key);
 		const char *s = brl.get();
 		if (s[0]) {
-			sOut.beep(1000, 10);
-			bKeyboard.print(s);
+			Serial.print(s);
 		}
 	}
 }
