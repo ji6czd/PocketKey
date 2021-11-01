@@ -180,7 +180,7 @@ void setup()
   // Set up and start advertising
   startAdv();
   keys.begin();
-	brl.begin(two_dot_mode);
+	brl.begin(three_dot_mode);
 }
 
 void loop()
@@ -201,9 +201,9 @@ void loop()
 		brl.input(key);
 		const char *s = brl.get();
 		if (s[0]) {
+			Serial.write(s);
 			blehid.keyPress(s[0]);
 			hasKeyPressed = true;
-			Serial.write(s[0]);
 			// Delay a bit after a report
 			delay(5);
 		}

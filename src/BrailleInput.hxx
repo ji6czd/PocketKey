@@ -4,16 +4,17 @@
 
 enum
 input_mode_t {
-	      eight_dot_mode,
-	      six_dot_mode,
-	      two_dot_mode
+	eight_dot_mode,
+	six_dot_mode,
+	two_dot_mode,
+	three_dot_mode
 };
 
 enum
 language_mode_t {
-		 nabcc,
-		 ubc,
-		 jp1
+	nabcc,
+	ubc,
+	jp1
 };
 
 class BrailleInput {
@@ -28,6 +29,7 @@ private:
   bool six_input(uint8_t key) { return true; };
   bool eight_input(uint8_t key) { return true; };
   bool two_input(uint8_t key);
+  bool three_input(uint8_t key);
   bool pushBackBraille();
   bool makeBraille();
   uint16_t inputKey;

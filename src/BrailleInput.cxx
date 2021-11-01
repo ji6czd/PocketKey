@@ -2,6 +2,7 @@
 Braille Input routine
 */
 
+#include "Arduino.h"
 #include "BrailleInput.hxx"
 
 class BrailleTranslation {
@@ -76,6 +77,7 @@ bool BrailleInput::input(uint16_t key)
 {
   if (i_mode == eight_dot_mode) return eight_input(key);
   if (i_mode == two_dot_mode) return two_input(key);
+  if (i_mode == three_dot_mode) return three_input(key);
   return false;
   if (i_mode == six_dot_mode) return six_input(key);
 }
@@ -124,6 +126,48 @@ bool BrailleInput::two_input(uint8_t key)
 
   // 最終段階、文字の生成
   if (inputState == 3) {
+    pushBackBraille();
+    pBt->translation(brlBuf, outStr);
+    inputKey=0;
+    inputState=0;
+    return true;
+  }
+  return false;
+}
+
+bool BrailleInput::three_input(uint8_t key)
+{
+  uint16_t i=0;
+  // 特殊キー処理
+  if (key == 0x9) {
+    brlBuf[0] = 0xB0;
+    inputState=0;
+    return true;
+  }
+  if (key == 0x0c) {
+    brlBuf[0] = 0xB2;
+    inputState=0;
+    return true;
+  }
+
+  // 入力を点字ビット列に変換
+  if (key == 0x8) i = 0; // ブランク
+  else {
+    if (key & 0x01) i = 1;
+    if (key & 0x02) i |= 0x02;
+    if (key & 0x04) i |= 0x04;
+  }
+  // 入力段階チェック
+  if (inputState == 1) i <<= 3;
+
+  // 次の段階に進むための初期化
+  inputKey |= i;
+  inputState++;
+  brlBuf[0] = 0;
+  outStr.clear();;
+
+  // 最終段階、文字の生成
+  if (inputState == 2) {
     pushBackBraille();
     pBt->translation(brlBuf, outStr);
     inputKey=0;
